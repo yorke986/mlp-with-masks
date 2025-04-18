@@ -19,6 +19,23 @@ class BinarySTE(torch.autograd.Function):
 def binary_ste(input):
     return BinarySTE.apply(input)
 
+
+# Swish
+# Define Swish as a custom activation function
+class Swish(nn.Module):
+    def forward(self, x):
+        return x * torch.sigmoid(x)
+
+# Alternatively, if you prefer a functional approach:
+def swish(x):
+    return x * torch.sigmoid(x)
+
+# Mish
+class Mish(nn.Module):
+    def forward(self, x):
+        return x * torch.tanh(nn.functional.softplus(x))
+
+
 class MLPWithMask(nn.Module):
     def __init__(self, input_dim, hidden_dim_1, hideen_dim_2, output_dim):
         super(MLPWithMask, self).__init__()
@@ -29,12 +46,12 @@ class MLPWithMask(nn.Module):
         # MLP
         self.feature_extraction_layer_1 = nn.Sequential(
             nn.Linear(input_dim, hidden_dim_1),
-            nn.PReLU()
+            nn.PReLU() # Mish() and Swish() are also all right
         )
         
         self.feature_extraction_layer_2 = nn.Sequential(
             nn.Linear(hidden_dim_1, hidden_dim_2),
-            nn.PReLU()
+            nn.PReLU() # Mish() and Swish() are also all right
         )
         self.classifier = nn.Sequential(
             nn.Linear(hidden_dim_2, output_dim)
